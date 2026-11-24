@@ -24,7 +24,8 @@
 {% assign _icl_found = false %}
 {% for _icl_url in _icl_images %}
   {% assign _icl_credit = _icl_url | image_credit %}
-  {% if _icl_credit.description or _icl_credit.creator or _icl_credit.identifier or _icl_credit.publisher or _icl_credit.source_url or _icl_credit.rights %}
+  {% assign _icl_date = _icl_credit.date | credit_date %}
+  {% if _icl_credit.description or _icl_credit.creator or _icl_credit.identifier or _icl_credit.publisher or _icl_credit.source_url or _icl_credit.rights or _icl_date != '' %}
     {% assign _icl_found = true %}
     {% break %}
   {% endif %}
@@ -36,11 +37,13 @@
   <ul class="image-credits-list mt-2 mb-0">
     {% for _icl_url in _icl_images %}
       {% assign _icl_credit = _icl_url | image_credit %}
-      {% if _icl_credit.description or _icl_credit.creator or _icl_credit.identifier or _icl_credit.publisher or _icl_credit.source_url or _icl_credit.rights %}
+      {% assign _icl_date = _icl_credit.date | credit_date %}
+      {% if _icl_credit.description or _icl_credit.creator or _icl_credit.identifier or _icl_credit.publisher or _icl_credit.source_url or _icl_credit.rights or _icl_date != '' %}
       <li>
         {%- capture _icl_caption -%}
           {%- if _icl_credit.description %}Image: {{ _icl_credit.description }}.{% endif %}
           {%- if _icl_credit.creator %} By {{ _icl_credit.creator }}.{% endif %}
+          {%- if _icl_date != '' %} Date: {{ _icl_date }}.{% endif %}
           {%- if _icl_credit.identifier %} {{ _icl_credit.identifier }}.{% endif %}
           {%- if _icl_credit.publisher or _icl_credit.source_url %} Source:
             {%- if _icl_credit.publisher %} {{ _icl_credit.publisher }}{% endif %}

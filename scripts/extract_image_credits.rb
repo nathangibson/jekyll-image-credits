@@ -41,11 +41,31 @@ class ImageCreditExtractor
   XMP_DC_FIELDS = {
     'Description'  => 'description',  # dc:description
     'Creator'      => 'creator',      # dc:creator (array)
+    'Date'         => 'date',         # dc:date (full date, year, or free text)
     'Identifier'   => 'identifier',   # dc:identifier
     'Publisher'    => 'publisher',    # dc:publisher (array)
     'Source'       => 'source_url',   # dc:source
     'Rights'       => 'rights'        # dc:rights
   }.freeze
+
+  # Normalize an XMP/EXIF date value to ISO 8601 where possible.
+  # Accepts "2012:12:31 15:20:00" (exiftool/EXIF), "2012-12-31T15:20:00",
+  # "2012-12-31", "2012-12", or "2012". Anything else (free text such as
+  # "c. 1900", or a bare year range) is returned unchanged — display code
+  # degrades gracefully on whatever it gets.
+  def self.normalize_date(value)
+    s = value.to_s.strip
+    return s if s.empty?
+
+    if s =~ /\A(\d{4})[:\-](\d{2})[:\-](\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?/
+      y, mo, d, h, mi, sec = Regexp.last_match.captures
+      iso = format('%04d-%02d-%02d', y.to_i, mo.to_i, d.to_i)
+      iso += format('T%02d:%02d:%02d', h.to_i, mi.to_i, (sec || 0).to_i) if h
+      return iso
+    end
+
+    s
+  end
 
   def initialize(dry_run: false)
     @dry_run   = dry_run
@@ -151,6 +171,7 @@ class ImageCreditExtractor
                           else
                             values.first
                           end
+        entry[yaml_key] = self.class.normalize_date(entry[yaml_key]) if yaml_key == 'date'
       end
     end
 

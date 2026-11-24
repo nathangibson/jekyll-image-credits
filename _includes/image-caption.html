@@ -22,10 +22,12 @@
 {% endcomment %}
 
 {% assign _ic_credit = include.url | image_credit %}
-{% if _ic_credit.description or _ic_credit.creator or _ic_credit.identifier or _ic_credit.publisher or _ic_credit.source_url or _ic_credit.rights %}
+{% assign _ic_date = _ic_credit.date | credit_date %}
+{% if _ic_credit.description or _ic_credit.creator or _ic_credit.identifier or _ic_credit.publisher or _ic_credit.source_url or _ic_credit.rights or _ic_date != '' %}
   {%- capture _ic_caption -%}
     {%- if _ic_credit.description %}Image: {{ _ic_credit.description }}.{% endif %}
     {%- if _ic_credit.creator %} By {{ _ic_credit.creator }}.{% endif %}
+    {%- if _ic_date != '' %} Date: {{ _ic_date }}.{% endif %}
     {%- if _ic_credit.identifier %} {{ _ic_credit.identifier }}.{% endif %}
     {%- if _ic_credit.publisher or _ic_credit.source_url %} Source:
       {%- if _ic_credit.publisher %} {{ _ic_credit.publisher }}{% endif %}
