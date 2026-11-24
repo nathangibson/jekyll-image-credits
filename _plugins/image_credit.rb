@@ -46,7 +46,7 @@ module Jekyll
       # Year only: 2012
       return s if s =~ /\A\d{4}\z/
 
-      # Year + month: 2012-12
+      # Year + month: 2012-12 (or exiftool's un-normalized 2012:12)
       if s =~ /\A(\d{4})[:\-](\d{2})\z/
         begin
           return Date.new(Regexp.last_match(1).to_i,

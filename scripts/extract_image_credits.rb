@@ -64,6 +64,11 @@ class ImageCreditExtractor
       return iso
     end
 
+    # Year + month only: exiftool prints a bare month as "2001:12".
+    if s =~ /\A(\d{4})[:\-](\d{2})\z/
+      return format('%04d-%02d', Regexp.last_match(1).to_i, Regexp.last_match(2).to_i)
+    end
+
     s
   end
 
